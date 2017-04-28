@@ -6,8 +6,6 @@
 //#include <string>
 //#include <iostream>
 
-
-
 namespace lospi
 {
 	struct md5Command : ICommand {
@@ -47,42 +45,6 @@ namespace lospi
 			//std::cout << "Expected Result: Md5 " << get_str_from_md5(md5_str) << "\n";
 
 			return L"MD5 " + get_str_from_md5(md5_str);
-
-
-			std::map<Md5Digest, std::string> list;	//map insertion
-
-			for (unsigned long i = 0; i < 10; i++)
-			{
-				Combinator c{ "hosj", i };
-				c.next(); //return 'h', 'h', 'h', 'h', 'h'
-				c.next(); //return 'h', 'h', 'h', 'h', 's'
-
-				while (c.has_next())
-				{
-					auto combo = c.next();
-
-					std::string x{ combo.begin(), combo.end() };
-					
-					x.append("op0y21");		//append the password to combo
-
-					auto md5 = compute_md5(x.data(), (unsigned long)x.size());
-
-					list.emplace(md5,x);
-
-				}
-			}
-
-			/*
-			Md5Digest hash;
-			auto result = lookup.find(hash);
-			if (result == lookup.end())
-			{
-				//Key not found!
-			}
-			*/
-
-
-
 
 		//private:
 		//	bool is_raining;

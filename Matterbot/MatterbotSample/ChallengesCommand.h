@@ -1,110 +1,71 @@
 #pragma once
 #include "Matterbot.h"
-#include "Md5.h"
 #include "Md5Utilities.h"
-#include <map>
-#include <algorithm>
+#include "Md5.h"
+#include <windows.h>
+#include <iostream>
 #include <sstream>
 #include <string>
-#include <iostream>
-
+#include <vector>
+#include <map>
+#include <algorithm>
 
 namespace lospi {
-	struct challenges : ICommand {
-		explicit challenges(std::shared_ptr<Matterbot> bot) : bot{ bot } { }
-		std::wstring get_name() override { return L"scraps"; }
+	std::map<Md5Digest, std::vector<char>> lookup;
+	std::vector<std::string> getNewChallenges;
+	std::wstring returnValue;
 
-		std::wstring get_help() override { return L"`scraps [hashes]`: `challenges`it starts a challenge"; }
+	struct ChallengesCommand : ICommand {
+		explicit ChallengesCommand(std::shared_ptr<Matterbot> bot) : bot{ bot } { }
+		std::wstring get_name() override { return L"challenges"; }
+
+		std::wstring get_help() override { return L"`challenges[CMD]`: `challenges` computes the hashes"; }
 
 		std::wstring handle_command(const std::wstring& team, const std::wstring& channel,
 			const std::wstring& user, const std::wstring& command_text) override {
 
-/*
-namespace lospi
-{
-	struct challenges : ICommand {
+			auto strLen = (command_text.size());
 
-		std::wstring get_name() override {
-			return L"challenges";
-		}
+			while (strLen) {
+				std::stringstream ss;
+				std::string text = wstring_to_string(command_text);
+				ss.str(text);
+				std::string str;
+				getNewChallenges.clear();
 
-		std::wstring get_help() override {
-			return L"`challenges [CMD]`:\n`it starts a challenge";
-		}
-
-		std::wstring handle_command(const std::wstring &team, const std::wstring &channel,
-			const std::wstring &user, const std::wstring &command_text)
-			override {
-*/
-
-			Md5Digest md5_str;
-			//Md5Digest hash;
-
-			auto md5_string = wstring_to_string(command_text);
-
-			auto *data = md5_string.c_str();
-			auto size = md5_string.size();
-
-			md5_str = compute_md5(data, (unsigned long)size);
-			auto md5Digest = get_str_from_md5(md5_str);
-
-			//std::cout << "Expected Result: Md5 " << get_str_from_md5(md5_str) << "\n";
-
-			return L"MD5 " + get_str_from_md5(md5_str);
-
-
-			std::map<Md5Digest, std::string> lookup;	//map insertion
-			
-			auto result = lookup.find(md5_str);
-			if (result == lookup.end())
-			{
-				return L"Error";	//BAD / Key not found!
-			}
-									//Result is valid pair or pare
-			auto key = result->first;
-			auto value = result->second;
-			
-			auto key_string = wstring_to_string(command_text);
-			auto key_data = key_string.c_str();
-			auto key_size = key_string.size();
-
-			std::wstringstream ss(command_text);
-			while (std::getline(ss, ' '))
-
-			if (key == compute_md5(key_data, key_size))
-			{
-				//string_to_wstring(value);
-				return L"rivestment try" + string_to_wstring(value);
-			}
-
-
-			bot->post_message(command_text);
-			
-
-			for (unsigned long i = 0; i < 10; i++)
-			{
-				Combinator c{ "hosj", i };
-				c.next(); //return 'h', 'h', 'h', 'h', 'h'
-				c.next(); //return 'h', 'h', 'h', 'h', 's'
-
-				while (c.has_next())
-				{
-					auto combo = c.next();
-
-					std::string x{ combo.begin(), combo.end() };
-
-					x.append("op0y21");		//append the password to combo
-
-					auto md5_Preimage = compute_md5(x.data(), (unsigned long)x.size());
-
-					lookup.emplace(md5_Preimage, x);
-
+			while (std::getline(ss, str, ' ')) {
+				getNewChallenges.push_back(str);
 				}
+				inputHash();
+				bot->post_message(L"rivestment try " + returnValue);
+				Sleep(2000);
+				bot->post_message(L"rivestment challenge 200");
+				return L"";
 			}
+		}
 
-		};
+void inputHash() 
+{
+	std::vector<std::wstring> hashVector;
+	hashVector.clear();
+	std::wstring hash;
+	auto newStrLen = (getNewChallenges.size());
+
+	for (int i = 0; i < newStrLen; i++) {
+		auto challengeStr = getNewChallenges[i];
+		auto result = lookup[get_md5_from_str(string_to_wstring(challengeStr))];
+		std::wstring hash(result.begin(), result.end());
+		hashVector.emplace_back(hash);
+	}
+	returnValue.clear();
+	for (int i = 0; i < hashVector.size(); i++) {
+		returnValue += hashVector[i] + L" ";
+	}
+	returnValue.pop_back();
+}
+
 	private:
 		std::shared_ptr<Matterbot> bot;
-		//	bool is_raining;
+		std::shared_ptr<ChallengesCommand> challenges;
 	};
 }
